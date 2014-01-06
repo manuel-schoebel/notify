@@ -22,15 +22,10 @@ Notify.render = function(msg, type, options) {
     if (Session.get('currentTimeout')) {
       Meteor.clearTimeout(Session.get('currentTimeout'));
     }
-    $('#notification-top').remove();
-    $('body').append(new Handlebars.SafeString(Template['notificationTop']({
-      message: msg,
-      type: type
-    })).string);
-    $('#notification-top').fadeIn();
+    Session.set('notify', {msg: msg, type: type});
     timeoutId = Meteor.setTimeout(function() {
       return $('#notification-top').fadeOut(500, function() {
-        return $('#notification-top').remove();
+        Session.set('notify', null);
       });
     }, 3000);
     return Session.set('currentTimeout', timeoutId);
@@ -38,12 +33,34 @@ Notify.render = function(msg, type, options) {
 };
 
 Notify.renderSticky = function(msg, type, options) {
-  $('body').append(new Handlebars.SafeString(Template['notificationTop']({
-    message: msg,
-    type: type,
-    html: options.html,
-    sticky: options.sticky
-  })).string);
+  Session.set('notify', {msg: msg, type: type, options: options});
   return $('#notification-top').alert();
 };
 
+Handlebars.registerHelper('errorMessageTop', function(){
+    if(Session.get('notify'))
+      return true;
+    return false;
+  }
+);
+
+Template.notificationTop.helpers({
+  type: function(){
+    notify = Session.get('notify');
+    if(notify)
+      return notify.type;
+    return '';
+  },
+  message: function(){
+    notify = Session.get('notify');
+    if(notify)
+      return notify.msg;
+    return '';
+  },
+  sticky: function(){
+    notify = Session.get('notify');
+    if(notify && notify.options)
+      return notify.options.sticky;
+    return false;
+  }
+});
