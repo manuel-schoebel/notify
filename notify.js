@@ -23,10 +23,10 @@ Notify.render = function(msg, type, options) {
       Meteor.clearTimeout(Session.get('currentTimeout'));
     }
     $('#notification-top').remove();
-    $('body').append(new Handlebars.SafeString(Template['notificationTop']({
+    $('body').append(Template['notificationTop'].withData({
       message: msg,
       type: type
-    })).string);
+    }));
     $('#notification-top').fadeIn();
     timeoutId = Meteor.setTimeout(function() {
       return $('#notification-top').fadeOut(500, function() {
@@ -38,12 +38,12 @@ Notify.render = function(msg, type, options) {
 };
 
 Notify.renderSticky = function(msg, type, options) {
-  $('body').append(new Handlebars.SafeString(Template['notificationTop']({
+  $('body').append(Template['notificationTop'].withData({
     message: msg,
     type: type,
     html: options.html,
     sticky: options.sticky
-  })).string);
+  }));
   return $('#notification-top').alert();
 };
 
