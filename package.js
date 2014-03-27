@@ -3,9 +3,8 @@ Package.describe({
 });
 
 Package.on_use(function(api){
-
-  api.use('jquery', 'client');
-  api.use(['templating'], 'client');
+  
+  api.use(['templating', 'jquery', 'ui'], 'client');
 
   if (typeof api.export !== 'undefined'){
     api.export('Notify');
